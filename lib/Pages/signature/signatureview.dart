@@ -28,7 +28,7 @@ class SignatureViewState extends State<SignatureView> {
     exportBackgroundColor: kWhiteColor,
   );
 
-  OrderHistory? orderDetaials;
+  OrderHistory? orderDetails;
   bool enterFirst = false;
   bool isLoading = false;
   dynamic apCurency;
@@ -51,7 +51,7 @@ class SignatureViewState extends State<SignatureView> {
 
   double calculateDistance(lat1, lon1, lat2, lon2) {
     var p = 0.017453292519943295;
-    var c = cos as double Function(num?);
+    var c = cos;
     var a = 0.5 - c((lat2 - lat1) * p) / 2 + c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p)) / 2;
     return 12742 * asin(sqrt(a));
   }
@@ -83,9 +83,9 @@ class SignatureViewState extends State<SignatureView> {
     if (!enterFirst) {
       setState(() {
         enterFirst = true;
-        orderDetaials = dataObject!['OrderDetail'] as OrderHistory?;
-        distance = calculateDistance(double.parse('${orderDetaials!.userLat}'), double.parse('${orderDetaials!.userLng}'), double.parse('${orderDetaials!.storeLat}'), double.parse('${orderDetaials!.storeLng}')).toStringAsFixed(2);
-        time = calculateTime(double.parse('${orderDetaials!.userLat}'), double.parse('${orderDetaials!.userLng}'), double.parse('${orderDetaials!.storeLat}'), double.parse('${orderDetaials!.storeLng}'));
+        orderDetails = dataObject!['OrderDetail'] as OrderHistory?;
+        distance = calculateDistance(double.parse('${orderDetails!.userLat}'), double.parse('${orderDetails!.userLng}'), double.parse('${orderDetails!.storeLat}'), double.parse('${orderDetails!.storeLng}')).toStringAsFixed(2);
+        time = calculateTime(double.parse('${orderDetails!.userLat}'), double.parse('${orderDetails!.userLng}'), double.parse('${orderDetails!.storeLat}'), double.parse('${orderDetails!.storeLng}'));
         print('$distance');
         print('$time');
       });
@@ -103,13 +103,13 @@ class SignatureViewState extends State<SignatureView> {
             title: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('${locale.order} - #${orderDetaials!.cartId}',
+                Text('${locale.order} - #${orderDetails!.cartId}',
                     // 'Order',
                     style: Theme.of(context).textTheme.headline4!.copyWith(fontWeight: FontWeight.w500, color: kMainTextColor, fontSize: 12)),
                 SizedBox(
                   height: 5,
                 ),
-                Text('${locale.order} ${locale.invoice3h} - $apCurency ${orderDetaials!.remainingPrice!.toStringAsFixed(2)}',
+                Text('${locale.order} ${locale.invoice3h} - $apCurency ${orderDetails!.remainingPrice!.toStringAsFixed(2)}',
                     // 'Order',
                     style: Theme.of(context).textTheme.headline4!.copyWith(fontWeight: FontWeight.w300, color: kMainTextColor, fontSize: 13)),
               ],
@@ -209,44 +209,48 @@ class SignatureViewState extends State<SignatureView> {
   }
 
   void uploadSignature(context, AppLocalizations locale) async {
-    Uint8List data = await (_controller.toPngBytes() as FutureOr<Uint8List>);
+    Uint8List? data = await _controller.toPngBytes();
 
     final directory = await getApplicationDocumentsDirectory();
 
-    File _image = await File('${directory.path}/image.png').writeAsBytes(data);
+    if(data != null) {
+      File _image = await File('${directory.path}/image.png').writeAsBytes(data);
 
-    print(_image.path);
-    var dio = Dio();
-    var formData = FormData.fromMap(
-      {
-        'cart_id': '${orderDetaials!.cartId}',
-        'user_signature': await MultipartFile.fromFile(_image.path),
-      },
-    );
+      print(_image.path);
+      var dio = Dio();
+      var formData = FormData.fromMap(
+        {
+          'cart_id': '${orderDetails!.cartId}',
+          'user_signature': await MultipartFile.fromFile(_image.path),
+        },
+      );
 
-    await dio
-        .post(deliveryCompletedUri.toString(),
-            data: formData,
-            options: Options(
-                // headers: await global.getApiHeaders(false),
-                ))
-        .then((response) {
-          print(response.data);
-      if ('${response.data['status']}' == '1') {
-        Navigator.pushNamed(context, PageRoutes.orderDeliveredPage, arguments: {
-          'OrderDetail': orderDetaials,
-          'dis': distance,
-          'time': time,
-        }).then((value) {});
-      }
-      ToastContext().init(context);
-      Toast.show(response.data['message'], gravity: Toast.center, duration: Toast.lengthShort);
+      await dio
+          .post(deliveryCompletedUri.toString(),
+          data: formData,
+          options: Options(
+            // headers: await global.getApiHeaders(false),
+          ))
+          .then((response) {
+        print(response.data);
+        if ('${response.data['status']}' == '1') {
+          Navigator.pushNamed(context, PageRoutes.orderDeliveredPage, arguments: {
+            'OrderDetail': orderDetails,
+            'dis': distance,
+            'time': time,
+          }).then((value) {});
+        }
+        ToastContext().init(context);
+        Toast.show(response.data['message'], gravity: Toast.center, duration: Toast.lengthShort);
 
-      setState(() {
-        isLoading = false;
+        setState(() {
+          isLoading = false;
+        });
+      }).catchError((e) {
+        print(e.toString());
       });
-    }).catchError((e) {
-      print(e.toString());
-    });
+    } else {
+      print('Unable to get user signature image. Function uploadSignature line 216');
+    }
   }
 }

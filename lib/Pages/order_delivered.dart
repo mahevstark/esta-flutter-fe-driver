@@ -22,7 +22,7 @@ class _OrderDeliveredPageState extends State<OrderDeliveredPage> {
   @override
   Widget build(BuildContext context) {
     var locale = AppLocalizations.of(context)!;
-    final Map<String, Object>? dataObject = ModalRoute.of(context)!.settings.arguments as Map<String, Object>?;
+    final Map<String, dynamic>? dataObject = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
     if (!enterFirst) {
       setState(() {
         enterFirst = true;

@@ -49,7 +49,7 @@ class _TomorrowOrderState extends State<TomorrowOrder> {
     http.post(ordersfornextdayUri, body: {'dboy_id': '${prefs.getInt('db_id')}'}).then((value) {
       print(value.body);
       if (value.statusCode == 200) {
-        if ('${value.body}' != '\n[{\"order_details\":\"no orders found\"}]') {
+        if ('${value.body}' != '[{\"order_details\":\"no orders found\"}]') {
           var jsD = jsonDecode(value.body) as List?;
           if (!pageDestroy) {
             setState(() {

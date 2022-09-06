@@ -53,6 +53,7 @@ analysis_benchmark.json
 .packages
 .pub-cache/
 .pub/
+.plugin_symlinks/
 build/
 flutter_*.png
 linked_*.ds
@@ -101,11 +102,8 @@ unlinked_spec.ds
 **/ios/Runner/GeneratedPluginRegistrant.*
 
 # macOS
-**/Flutter/ephemeral/
-**/Pods/
 **/macos/Flutter/GeneratedPluginRegistrant.swift
 **/macos/Flutter/ephemeral
-**/xcuserdata/
 
 # Coverage
 coverage/
@@ -120,3 +118,9 @@ app.*.symbols
 !**/ios/**/default.perspectivev3
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
 !/dev/ci/**/Gemfile.lock
+
+#FVM
+.fvm/flutter_sdk
+
+local.properties
+android/app/release/EstaMart-Driver.apk

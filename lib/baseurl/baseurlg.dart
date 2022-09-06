@@ -1,6 +1,7 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
-var imagebaseUrl1 = 'https://gogrocer.tecmanic.com/';
+// var imagebaseUrl1 = 'https://gogrocer.tecmanic.com/';
+var imagebaseUrl1 = 'https://estamart.pricopletzetoni.com/';
 late var imagebaseUrl;
 void getImageBaseUrl() async {
   SharedPreferences.getInstance().then((value) {
@@ -22,8 +23,10 @@ var driverCallbackReqUrl = Uri.parse('${dirverBaseUrl}driver_callback_req');
 var driverFeedbackUrl = Uri.parse('${dirverBaseUrl}driver_feedback');
 var completedOrdersUrl = Uri.parse('${dirverBaseUrl}completed_orders');
 var appAboutusUri = Uri.parse('${apibaseUrl}appaboutus');
-var driverNotificationUri = Uri.parse('${dirverBaseUrl}driver_notificationlist');
-var driverDeleteAllNotificationUri = Uri.parse('${dirverBaseUrl}driver_delete_all_notification');
+var driverNotificationUri =
+    Uri.parse('${dirverBaseUrl}driver_notificationlist');
+var driverDeleteAllNotificationUri =
+    Uri.parse('${dirverBaseUrl}driver_delete_all_notification');
 var updateStatusUri = Uri.parse('${dirverBaseUrl}update_status');
 var ordersfortodayUri = Uri.parse('${dirverBaseUrl}ordersfortoday');
 var ordersfornextdayUri = Uri.parse('${dirverBaseUrl}ordersfornextday');

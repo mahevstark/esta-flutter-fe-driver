@@ -44,7 +44,7 @@ class _TodayOrderState extends State<TodayOrder> {
         apCurency = prefs.getString('app_currency');
       });
     }
-
+    debugPrint("ID: ${prefs.getInt('db_id')}");
     http.post(ordersfortodayUri,
         body: {'dboy_id': '${prefs.getInt('db_id')}'}).then((value) {
       print(value.body);

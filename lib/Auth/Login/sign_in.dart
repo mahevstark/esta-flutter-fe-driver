@@ -145,7 +145,8 @@ class _SignInState extends State<SignIn> {
                       keyboardType: TextInputType.number,
                     ),
                     Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
                       child: Text(
                         locale.password1!,
                         style: Theme.of(context).textTheme.headline6!.copyWith(
@@ -156,24 +157,27 @@ class _SignInState extends State<SignIn> {
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 0.0),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 20.0, vertical: 0.0),
                       child: TextField(
                         obscureText: showPassword,
                         obscuringCharacter: "*",
-
                         controller: passwordController,
                         decoration: InputDecoration(
                           enabledBorder: UnderlineInputBorder(
                             borderSide: BorderSide(color: Colors.grey[200]!),
                           ),
                           hintText: locale.password2,
-                          hintStyle: Theme.of(context).textTheme.subtitle1!.copyWith(
-                                color: kHintColor,
-                                fontSize: 18.3,
-                              ),
+                          hintStyle:
+                              Theme.of(context).textTheme.subtitle1!.copyWith(
+                                    color: kHintColor,
+                                    fontSize: 18.3,
+                                  ),
                           suffixIcon: IconButton(
                             icon: Icon(
-                              showPassword ? Icons.visibility_off : Icons.visibility,
+                              showPassword
+                                  ? Icons.visibility_off
+                                  : Icons.visibility,
                             ),
                             onPressed: () {
                               setState(() {
@@ -212,7 +216,10 @@ class _SignInState extends State<SignIn> {
                           thickness: 1.0,
                           color: Colors.transparent,
                         ),
-                        Container(alignment: Alignment.center, margin: EdgeInsets.only(top: 10, bottom: 10), child: CircularProgressIndicator()),
+                        Container(
+                            alignment: Alignment.center,
+                            margin: EdgeInsets.only(top: 10, bottom: 10),
+                            child: CircularProgressIndicator()),
                         Divider(
                           thickness: 1.0,
                           color: Colors.transparent,
@@ -226,10 +233,13 @@ class _SignInState extends State<SignIn> {
                             showProgress = true;
                           });
                           if (passwordController.text.length > 4) {
-                            hitLoginUrl('${phoneNumberController.text}', passwordController.text, context);
+                            hitLoginUrl('${phoneNumberController.text}',
+                                passwordController.text, context);
                           } else {
                             ToastContext().init(context);
-                            Toast.show(locale.incorectPassword!, gravity: Toast.center, duration: Toast.lengthShort);
+                            Toast.show(locale.incorectPassword!,
+                                gravity: Toast.center,
+                                duration: Toast.lengthShort);
                             setState(() {
                               showProgress = false;
                             });
@@ -245,10 +255,13 @@ class _SignInState extends State<SignIn> {
   }
 
   bool emailValidator(email) {
-    return RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(email);
+    return RegExp(
+            r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+        .hasMatch(email);
   }
 
-  void hitLoginUrl(dynamic userPhone, dynamic userPassword, BuildContext context) async {
+  void hitLoginUrl(
+      dynamic userPhone, dynamic userPassword, BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     if (token != null) {
       print(token);
@@ -260,7 +273,8 @@ class _SignInState extends State<SignIn> {
       }).then((value) {
         print('sign - ${value.body}');
         if (value.statusCode == 200) {
-          DeliveryBoyLogin dbLogin = DeliveryBoyLogin.fromJson(jsonDecode(value.body));
+          DeliveryBoyLogin dbLogin =
+              DeliveryBoyLogin.fromJson(jsonDecode(value.body));
           if ('${dbLogin.status}' == '1') {
             prefs.setInt('db_id', int.parse('${dbLogin.data!.dboyId}'));
             prefs.setString('boy_name', '${dbLogin.data!.boyName}');
@@ -274,7 +288,8 @@ class _SignInState extends State<SignIn> {
             prefs.setString('added_by', '${dbLogin.data!.addedBy}');
             prefs.setString('ad_dboy_id', '${dbLogin.data!.dboyId}');
             prefs.setBool('islogin', true);
-            Navigator.pushNamedAndRemoveUntil(context, PageRoutes.homePage, (route) => false);
+            Navigator.pushNamedAndRemoveUntil(
+                context, PageRoutes.homePage, (route) => false);
           } else {
             prefs.setBool('islogin', false);
           }

@@ -52,7 +52,9 @@ class SignatureViewState extends State<SignatureView> {
   double calculateDistance(lat1, lon1, lat2, lon2) {
     var p = 0.017453292519943295;
     var c = cos;
-    var a = 0.5 - c((lat2 - lat1) * p) / 2 + c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p)) / 2;
+    var a = 0.5 -
+        c((lat2 - lat1) * p) / 2 +
+        c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p)) / 2;
     return 12742 * asin(sqrt(a));
   }
 
@@ -67,7 +69,10 @@ class SignatureViewState extends State<SignatureView> {
       double tt = min % 60;
       String minutes = '${tt.toInt()}';
       minutes = minutes.length == 1 ? "0" + minutes : minutes;
-      return '${(min.toInt() / 60).toStringAsFixed(2)}' + " hour " + minutes + " mins";
+      return '${(min.toInt() / 60).toStringAsFixed(2)}' +
+          " hour " +
+          minutes +
+          " mins";
     }
   }
 
@@ -79,13 +84,23 @@ class SignatureViewState extends State<SignatureView> {
   @override
   Widget build(BuildContext context) {
     var locale = AppLocalizations.of(context)!;
-    final Map<String, Object>? dataObject = ModalRoute.of(context)!.settings.arguments as Map<String, Object>?;
+    final Map<String, Object>? dataObject =
+        ModalRoute.of(context)!.settings.arguments as Map<String, Object>?;
     if (!enterFirst) {
       setState(() {
         enterFirst = true;
         orderDetails = dataObject!['OrderDetail'] as OrderHistory?;
-        distance = calculateDistance(double.parse('${orderDetails!.userLat}'), double.parse('${orderDetails!.userLng}'), double.parse('${orderDetails!.storeLat}'), double.parse('${orderDetails!.storeLng}')).toStringAsFixed(2);
-        time = calculateTime(double.parse('${orderDetails!.userLat}'), double.parse('${orderDetails!.userLng}'), double.parse('${orderDetails!.storeLat}'), double.parse('${orderDetails!.storeLng}'));
+        distance = calculateDistance(
+                double.parse('${orderDetails!.userLat}'),
+                double.parse('${orderDetails!.userLng}'),
+                double.parse('${orderDetails!.storeLat}'),
+                double.parse('${orderDetails!.storeLng}'))
+            .toStringAsFixed(2);
+        time = calculateTime(
+            double.parse('${orderDetails!.userLat}'),
+            double.parse('${orderDetails!.userLng}'),
+            double.parse('${orderDetails!.storeLat}'),
+            double.parse('${orderDetails!.storeLng}'));
         print('$distance');
         print('$time');
       });
@@ -105,13 +120,20 @@ class SignatureViewState extends State<SignatureView> {
               children: [
                 Text('${locale.order} - #${orderDetails!.cartId}',
                     // 'Order',
-                    style: Theme.of(context).textTheme.headline4!.copyWith(fontWeight: FontWeight.w500, color: kMainTextColor, fontSize: 12)),
+                    style: Theme.of(context).textTheme.headline4!.copyWith(
+                        fontWeight: FontWeight.w500,
+                        color: kMainTextColor,
+                        fontSize: 12)),
                 SizedBox(
                   height: 5,
                 ),
-                Text('${locale.order} ${locale.invoice3h} - $apCurency ${orderDetails!.remainingPrice!.toStringAsFixed(2)}',
+                Text(
+                    '${locale.order} ${locale.invoice3h} - $apCurency ${orderDetails!.remainingPrice!.toStringAsFixed(2)}',
                     // 'Order',
-                    style: Theme.of(context).textTheme.headline4!.copyWith(fontWeight: FontWeight.w300, color: kMainTextColor, fontSize: 13)),
+                    style: Theme.of(context).textTheme.headline4!.copyWith(
+                        fontWeight: FontWeight.w300,
+                        color: kMainTextColor,
+                        fontSize: 13)),
               ],
             ),
             actions: <Widget>[
@@ -129,7 +151,8 @@ class SignatureViewState extends State<SignatureView> {
                   },
                   child: Text(
                     locale.clearview!,
-                    style: TextStyle(color: kWhiteColor, fontWeight: FontWeight.w400),
+                    style: TextStyle(
+                        color: kWhiteColor, fontWeight: FontWeight.w400),
                   ),
                 ),
               )
@@ -178,6 +201,7 @@ class SignatureViewState extends State<SignatureView> {
                             setState(() {
                               isLoading = true;
                             });
+                            debugPrint("Cart Id: ${orderDetails!.cartId}");
                             uploadSignature(context, locale);
                           }
                         },
@@ -185,7 +209,8 @@ class SignatureViewState extends State<SignatureView> {
                         child: Card(
                           elevation: 5,
                           clipBehavior: Clip.antiAlias,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0)),
                           child: Container(
                             width: MediaQuery.of(context).size.width - 100,
                             height: 52,
@@ -197,7 +222,10 @@ class SignatureViewState extends State<SignatureView> {
                             child: Text(
                               locale.markAsDelivered!,
                               textAlign: TextAlign.center,
-                              style: TextStyle(color: kWhiteColor, fontWeight: FontWeight.w600, fontSize: 16),
+                              style: TextStyle(
+                                  color: kWhiteColor,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 16),
                             ),
                           ),
                         ),
@@ -213,8 +241,9 @@ class SignatureViewState extends State<SignatureView> {
 
     final directory = await getApplicationDocumentsDirectory();
 
-    if(data != null) {
-      File _image = await File('${directory.path}/image.png').writeAsBytes(data);
+    if (data != null) {
+      File _image =
+          await File('${directory.path}/image.png').writeAsBytes(data);
 
       print(_image.path);
       var dio = Dio();
@@ -227,21 +256,23 @@ class SignatureViewState extends State<SignatureView> {
 
       await dio
           .post(deliveryCompletedUri.toString(),
-          data: formData,
-          options: Options(
-            // headers: await global.getApiHeaders(false),
-          ))
+              data: formData,
+              options: Options(
+                  // headers: await global.getApiHeaders(false),
+                  ))
           .then((response) {
         print(response.data);
         if ('${response.data['status']}' == '1') {
-          Navigator.pushNamed(context, PageRoutes.orderDeliveredPage, arguments: {
-            'OrderDetail': orderDetails,
-            'dis': distance,
-            'time': time,
-          }).then((value) {});
+          Navigator.pushNamed(context, PageRoutes.orderDeliveredPage,
+              arguments: {
+                'OrderDetail': orderDetails,
+                'dis': distance,
+                'time': time,
+              }).then((value) {});
         }
         ToastContext().init(context);
-        Toast.show(response.data['message'], gravity: Toast.center, duration: Toast.lengthShort);
+        Toast.show(response.data['message'],
+            gravity: Toast.center, duration: Toast.lengthShort);
 
         setState(() {
           isLoading = false;
@@ -250,7 +281,8 @@ class SignatureViewState extends State<SignatureView> {
         print(e.toString());
       });
     } else {
-      print('Unable to get user signature image. Function uploadSignature line 216');
+      print(
+          'Unable to get user signature image. Function uploadSignature line 216');
     }
   }
 }

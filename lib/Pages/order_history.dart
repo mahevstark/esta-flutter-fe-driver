@@ -25,7 +25,9 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
   double calculateDistance(lat1, lon1, lat2, lon2) {
     var p = 0.017453292519943295;
     var c = cos as double Function(num?);
-    var a = 0.5 - c((lat2 - lat1) * p) / 2 + c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p)) / 2;
+    var a = 0.5 -
+        c((lat2 - lat1) * p) / 2 +
+        c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p)) / 2;
     return 12742 * asin(sqrt(a));
   }
 
@@ -40,7 +42,10 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
       double tt = min % 60;
       String minutes = '${tt.toInt()}';
       minutes = minutes.length == 1 ? "0" + minutes : minutes;
-      return '${(min.toInt() / 60).toStringAsFixed(2)}' + " hour " + minutes + " mins";
+      return '${(min.toInt() / 60).toStringAsFixed(2)}' +
+          " hour " +
+          minutes +
+          " mins";
     }
   }
 
@@ -60,14 +65,25 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
   @override
   Widget build(BuildContext context) {
     var locale = AppLocalizations.of(context)!;
-    final Map<String, Object>? dataObject = ModalRoute.of(context)!.settings.arguments as Map<String, Object>?;
+    final Map<String, OrderHistory?> dataObject = ModalRoute.of(context)!
+        .settings
+        .arguments as Map<String, OrderHistory?>;
     if (!enterFirst) {
       setState(() {
         enterFirst = true;
         orderDetaials = dataObject!['OrderDetail'] as OrderHistory?;
         orderDetails = orderDetaials!.items;
-        distance = calculateDistance(double.parse('${orderDetaials!.userLat}'), double.parse('${orderDetaials!.userLng}'), double.parse('${orderDetaials!.storeLat}'), double.parse('${orderDetaials!.storeLng}')).toStringAsFixed(2);
-        time = calculateTime(double.parse('${orderDetaials!.userLat}'), double.parse('${orderDetaials!.userLng}'), double.parse('${orderDetaials!.storeLat}'), double.parse('${orderDetaials!.storeLng}'));
+        distance = calculateDistance(
+                double.parse('${orderDetaials!.userLat}'),
+                double.parse('${orderDetaials!.userLng}'),
+                double.parse('${orderDetaials!.storeLat}'),
+                double.parse('${orderDetaials!.storeLng}'))
+            .toStringAsFixed(2);
+        time = calculateTime(
+            double.parse('${orderDetaials!.userLat}'),
+            double.parse('${orderDetaials!.userLng}'),
+            double.parse('${orderDetaials!.storeLat}'),
+            double.parse('${orderDetaials!.storeLng}'));
         print('$distance');
         print('$time');
       });
@@ -75,7 +91,8 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: true,
-        title: Text('${locale.order} - #${orderDetaials!.cartId}\n${locale.deliveryDate} ${orderDetaials!.deliveryDate}'),
+        title: Text(
+            '${locale.order} - #${orderDetaials!.cartId}\n${locale.deliveryDate} ${orderDetaials!.deliveryDate}'),
       ),
       body: Container(
         height: MediaQuery.of(context).size.height,
@@ -105,18 +122,26 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                                         width: 90,
                                         decoration: BoxDecoration(
                                           color: Colors.grey[300],
-                                          borderRadius: BorderRadius.circular(5),
+                                          borderRadius:
+                                              BorderRadius.circular(5),
                                         ),
                                         padding: EdgeInsets.all(5),
-                                        child: ClipRRect(borderRadius: BorderRadius.circular(5), child: Image.network('${orderDetails![index].varientImage}', fit: BoxFit.cover)),
+                                        child: ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(5),
+                                            child: Image.network(
+                                                '${orderDetails![index].varientImage}',
+                                                fit: BoxFit.cover)),
                                       ),
                                       SizedBox(
                                         width: 10,
                                       ),
                                       Expanded(
                                           child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text(
                                             '${orderDetails![index].productName} (${orderDetails![index].quantity} ${orderDetails![index].unit})',
@@ -139,7 +164,8 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                                             height: 5,
                                           ),
                                           Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
                                             children: [
                                               Text(
                                                 '${locale.invoice3h} - $apCurency ${(double.parse('${orderDetails![index].price}') / double.parse('${orderDetails![index].qty}'))}',
@@ -177,12 +203,17 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                       thickness: 0.8,
                     ),
                     Container(
-                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                       color: Color(0xffF4F7FA),
                       child: Row(
                         children: [
-                          Text('${locale.paymentmode} \n${orderDetaials!.paymentMethod}',
-                              style: Theme.of(context).textTheme.bodyText1!.copyWith(
+                          Text(
+                              '${locale.paymentmode} \n${orderDetaials!.paymentMethod}',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyText1!
+                                  .copyWith(
                                     fontSize: 16,
                                     color: Color(0xFF39c526),
                                   )),
@@ -190,23 +221,38 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                           Text(
                             '${locale.invoice4h} ${locale.invoice3h} \n$apCurency ${orderDetaials!.remainingPrice!.toStringAsFixed(2)}',
                             textAlign: TextAlign.center,
-                            style: Theme.of(context).textTheme.bodyText1!.copyWith(
-                                  fontSize: 16,
-                                  color: Color(0xFF39c526),
-                                ),
+                            style:
+                                Theme.of(context).textTheme.bodyText1!.copyWith(
+                                      fontSize: 16,
+                                      color: Color(0xFF39c526),
+                                    ),
                           )
                         ],
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16.0, vertical: 12),
                       child: Row(
                         children: [
                           RichText(
                               text: TextSpan(children: <TextSpan>[
-                            TextSpan(text: locale.distance! + '\n', style: Theme.of(context).textTheme.bodyText1),
-                            TextSpan(text: '$distance km', style: Theme.of(context).textTheme.bodyText1!.copyWith(color: Colors.green, height: 1.5)),
-                            TextSpan(text: ' ($time)', style: Theme.of(context).textTheme.subtitle2!.copyWith(fontWeight: FontWeight.w300)),
+                            TextSpan(
+                                text: locale.distance! + '\n',
+                                style: Theme.of(context).textTheme.bodyText1),
+                            TextSpan(
+                                text: '$distance km',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyText1!
+                                    .copyWith(
+                                        color: Colors.green, height: 1.5)),
+                            TextSpan(
+                                text: ' ($time)',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .subtitle2!
+                                    .copyWith(fontWeight: FontWeight.w300)),
                           ])),
                           Spacer(
                             flex: 2,
@@ -225,11 +271,17 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                       ),
                       title: Text(
                         '${orderDetaials!.storeName}',
-                        style: Theme.of(context).textTheme.bodyText1!.copyWith(fontSize: 16),
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyText1!
+                            .copyWith(fontSize: 16),
                       ),
                       subtitle: Text(
                         '${orderDetaials!.storeAddress}',
-                        style: Theme.of(context).textTheme.bodyText2!.copyWith(fontSize: 12),
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyText2!
+                            .copyWith(fontSize: 12),
                       ),
                     ),
                     ListTile(
@@ -240,11 +292,17 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                       ),
                       title: Text(
                         '${orderDetaials!.userName}',
-                        style: Theme.of(context).textTheme.bodyText1!.copyWith(fontSize: 16),
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyText1!
+                            .copyWith(fontSize: 16),
                       ),
                       subtitle: Text(
                         '${orderDetaials!.userAddress}',
-                        style: Theme.of(context).textTheme.bodyText2!.copyWith(fontSize: 12),
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyText2!
+                            .copyWith(fontSize: 12),
                       ),
                     ),
                     SizedBox(height: 60),
@@ -254,7 +312,8 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
             ),
             CustomButton(
               onTap: () {
-                Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) {
+                Navigator.pushAndRemoveUntil(context,
+                    MaterialPageRoute(builder: (context) {
                   return DeliveryBoyHome();
                 }), (Route<dynamic> route) => false);
               },
